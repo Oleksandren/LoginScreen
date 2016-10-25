@@ -12,7 +12,7 @@ import UIKit
 class OLNSocialButton: UIButton {
     @IBOutlet weak var layoutConstraintWidth: NSLayoutConstraint!
     @IBOutlet weak var layoutConstraintLeadingSpace: NSLayoutConstraint?
-    @IBInspectable var expandedSize: CGSize = CGSizeZero
+    @IBInspectable var expandedSize: CGSize = CGSize.zero
     var expanded = false
     var drawExpandedBackground = false
     var initialFrame: CGRect!
@@ -23,34 +23,39 @@ class OLNSocialButton: UIButton {
         self.initialFrame = self.frame
     }
     
-    override func imageRectForContentRect(contentRect: CGRect) -> CGRect {
-        var imageRect = CGRectZero
+    override func imageRect(forContentRect contentRect: CGRect) -> CGRect {
+        var imageRect = CGRect.zero
         imageRect.size = initialFrame.size
         return imageRect
     }
     
-    override func drawRect(rect: CGRect) {
-        super.drawRect(rect)
+    override func draw(_ rect: CGRect) {
+        super.draw(rect)
         if drawExpandedBackground {
             let context = UIGraphicsGetCurrentContext()
-            CGContextSaveGState(context);
-            CGContextAddRect(context, CGContextGetClipBoundingBox(context));
-            CGContextAddArc(context, 19, 19, 19, 0, CGFloat(Float(M_PI) * 2), 0)
-            CGContextClosePath(context);
-            CGContextEOClip(context);
-            CGContextMoveToPoint(context, 0, 0);
-            CGContextAddLineToPoint(context, 168, 0);
-            CGContextAddLineToPoint(context, 168, 38);
-            CGContextAddLineToPoint(context, 0, 38);
-            CGContextAddLineToPoint(context, 0, 0);
-            CGContextSetRGBFillColor(context, 0.75, 0.75, 0.75, 0.5);
-            CGContextFillPath(context);
-            CGContextRestoreGState(context);
+            context?.saveGState();
+            context?.addRect((context?.boundingBoxOfClipPath)!);
+            context?.addArc(center: CGPoint(x: 19, y: 19),
+                       radius: 19,
+                       startAngle: 0,
+                       endAngle: CGFloat(Float(M_PI) * 2),
+                       clockwise: false)
+            context?.closePath();
+            context?.clip(using: .evenOdd)
+
+            context?.move(to: CGPoint(x: 0, y: 0));
+            context?.addLine(to: CGPoint(x: 168, y: 0));
+            context?.addLine(to: CGPoint(x: 168, y: 38));
+            context?.addLine(to: CGPoint(x: 0, y: 38));
+            context?.addLine(to: CGPoint(x: 0, y: 0));
+            context?.setFillColor(red: 0.75, green: 0.75, blue: 0.75, alpha: 0.5);
+            context?.fillPath();
+            context?.restoreGState();
         }
     }
     
     func checkSettings() -> Bool {
-        if CGSizeEqualToSize(expandedSize, CGSizeZero) {
+        if expandedSize.equalTo(CGSize.zero) {
             print("Expanded Size must be setted in IB")
             return false
         }
@@ -72,13 +77,13 @@ class OLNSocialButton: UIButton {
             self.setNeedsDisplay()
         }
         
-        var initialBounds = CGRectZero
+        var initialBounds = CGRect.zero
         initialBounds.size = initialFrame.size
-        let initialCornerRadius = max(CGRectGetHeight(initialBounds), CGRectGetWidth(initialBounds))
-        let initialPath = UIBezierPath(roundedRect: initialBounds, cornerRadius: initialCornerRadius).CGPath
+        let initialCornerRadius = max(initialBounds.height, initialBounds.width)
+        let initialPath = UIBezierPath(roundedRect: initialBounds, cornerRadius: initialCornerRadius).cgPath
         let finalCornerRadius = max(expandedSize.width, expandedSize.height)
-        let finalRect = CGRectMake(0, 0, expandedSize.width, expandedSize.height)
-        let finalParh  = UIBezierPath(roundedRect: finalRect, cornerRadius: finalCornerRadius).CGPath
+        let finalRect = CGRect(x: 0, y: 0, width: expandedSize.width, height: expandedSize.height)
+        let finalParh  = UIBezierPath(roundedRect: finalRect, cornerRadius: finalCornerRadius).cgPath
         
         let maskLayerAnimation = CABasicAnimation(keyPath: "path")
         maskLayerAnimation.fromValue = (expanded ? initialPath : finalParh)
@@ -87,7 +92,7 @@ class OLNSocialButton: UIButton {
         maskLayerAnimation.delegate = self
         
         let maskLayer = CAShapeLayer()
-        maskLayer.addAnimation(maskLayerAnimation, forKey: nil)
+        maskLayer.add(maskLayerAnimation, forKey: nil)
         maskLayer.path = (expanded ? finalParh : initialPath)
         self.layer.mask = maskLayer
         
@@ -97,11 +102,11 @@ class OLNSocialButton: UIButton {
         anim.fromValue = (expanded ? fromVal : toVal)
         anim.toValue = (expanded ? toVal : fromVal)
         anim.duration = OLNConstans.animationDuration
-        self.layer.addAnimation(anim, forKey: nil)
+        self.layer.add(anim, forKey: nil)
         anim.delegate = self
     }
     
-    override func animationDidStop(anim: CAAnimation, finished flag: Bool) {
+    override func animationDidStop(_ anim: CAAnimation, finished flag: Bool) {
         if !expanded {
             layoutConstraintWidth.constant = initialFrame.size.width
             self.layoutIfNeeded()

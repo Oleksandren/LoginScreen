@@ -20,14 +20,14 @@ class LoginVC: UIViewController, UITextFieldDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        imageViewUserPhoto.layer.borderColor = UIColor.whiteColor().CGColor
+        imageViewUserPhoto.layer.borderColor = UIColor.white.cgColor
         imageViewUserPhoto.layer.borderWidth = 2
         imageViewUserPhoto.layer.cornerRadius = imageViewUserPhoto.bounds.size.height / 2.0
     }
     
     //MARK: - UITextFieldDelegate
     
-    func textFieldDidBeginEditing(textField: UITextField) {
+    func textFieldDidBeginEditing(_ textField: UITextField) {
         buttonLogin.animationCircular(directionShow: true)
         viewSocialBtns.animationMoveUp(false, andHide: true)
     }
@@ -45,7 +45,7 @@ class LoginVC: UIViewController, UITextFieldDelegate {
         }
     }
     
-    @IBAction func useSocial(sender: OLNSocialButton) {
+    @IBAction func useSocial(_ sender: OLNSocialButton) {
         if sender.expanded {
             //Do Sign In
             switch sender.tag {
@@ -67,7 +67,7 @@ class LoginVC: UIViewController, UITextFieldDelegate {
     
     //MARK: - Animation logic
     
-    func expandSocialButton(button: OLNSocialButton) {
+    func expandSocialButton(_ button: OLNSocialButton) {
         let willBeginExpanding = !button.expanded
         button.expand()
         
@@ -80,7 +80,7 @@ class LoginVC: UIViewController, UITextFieldDelegate {
         
         //animated move and hide/show textFields
         for  textField in [textFieldEmail, textFieldPassw]{
-            textField.animationMoveUp(true, andHide: willBeginExpanding)
+            textField?.animationMoveUp(true, andHide: willBeginExpanding)
         }
         
         //animated show/hide user profile info

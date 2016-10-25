@@ -11,7 +11,7 @@ import  UIKit
 
 let OLNCircularAnimationHideWhenFinishedKey = "OLNCircularAnimationHideWhenFinishedKey"
 
-extension UIView {
+extension UIView: CAAnimationDelegate {
     
     //MARK: - Base animation methods
     
@@ -23,9 +23,9 @@ extension UIView {
         return animFade
     }
     
-    func animationMoveUp(directionUp: Bool, andHide hide: Bool) {
+    func animationMoveUp(_ directionUp: Bool, andHide hide: Bool) {
         
-        guard hide == Bool(self.alpha) else {
+        guard hide == Bool(self.alpha == 0) else {
             return
         }
         self.layer.removeAllAnimations()
@@ -44,27 +44,27 @@ extension UIView {
         let animGroup = CAAnimationGroup()
         animGroup.animations = [animMove, UIView.animationFade(directionFade:hide)]
         animGroup.duration = OLNConstans.animationDuration
-        self.layer.addAnimation(animGroup, forKey: nil)
+        self.layer.add(animGroup, forKey: nil)
     }
 
     func animationCircular(directionShow show: Bool, startPoint: CGPoint) {
-        if show != hidden {
+        if show != isHidden {
             return
         }
         self.layer.removeAllAnimations()
-        self.hidden = false
+        self.isHidden = false
         
-        let initialRect = CGRectMake(startPoint.x, startPoint.y, 0, 0)
-        let initialPath = UIBezierPath(ovalInRect: initialRect).CGPath
+        let initialRect = CGRect(x: startPoint.x, y: startPoint.y, width: 0, height: 0)
+        let initialPath = UIBezierPath(ovalIn: initialRect).cgPath
         
-        var h = self.frame.size.height - CGRectGetMaxY(initialRect)
-        h = max(CGRectGetMaxY(initialRect), h)
+        var h = self.frame.size.height - initialRect.maxY
+        h = max(initialRect.maxY, h)
         
-        var w = self.frame.size.width - CGRectGetMaxX(initialRect)
-        w = max(CGRectGetMaxX(initialRect), w)
+        var w = self.frame.size.width - initialRect.maxX
+        w = max(initialRect.maxX, w)
         
         let radius = sqrt((h * h) + (w * w))
-        let finalParh = UIBezierPath(ovalInRect: CGRectInset(initialRect, -radius, -radius)).CGPath
+        let finalParh = UIBezierPath(ovalIn: initialRect.insetBy(dx: -radius, dy: -radius)).cgPath
         
         let maskLayerAnimation = CABasicAnimation(keyPath: "path")
         maskLayerAnimation.fromValue = (show ? initialPath : finalParh)
@@ -77,7 +77,7 @@ extension UIView {
         }
         
         let maskLayer = CAShapeLayer()
-        maskLayer.addAnimation(maskLayerAnimation, forKey: nil)
+        maskLayer.add(maskLayerAnimation, forKey: nil)
         
         maskLayer.path = (show ? finalParh : initialPath)
         self.layer.mask = maskLayer
@@ -86,7 +86,7 @@ extension UIView {
     //MARK: - Convenience methods
     
     func animationFade(directionFade fade:Bool) {
-        self.layer.addAnimation(UIView.animationFade(directionFade:fade), forKey: nil)
+        self.layer.add(UIView.animationFade(directionFade:fade), forKey: nil)
         self.alpha = fade ? 0 : 1
     }
     
@@ -98,16 +98,16 @@ extension UIView {
      * if startTop - false - animation begin from bottom
      */
     func animationCircular(directionShow show: Bool, startTop: Bool) {
-        var startPoint = CGPointMake(self.bounds.width/2.0, 0)
+        var startPoint = CGPoint(x: self.bounds.width/2.0, y: 0)
         if !startTop  {startPoint.y = self.bounds.height}
         self.animationCircular(directionShow: show, startPoint: startPoint)
     }
     
     //MARK: - CAAnimation Delegate
     
-    override public func animationDidStop(anim: CAAnimation, finished flag: Bool) {
-        if (anim.valueForKey(OLNCircularAnimationHideWhenFinishedKey) != nil) {
-            self.hidden = true
+    public func animationDidStop(_ anim: CAAnimation, finished flag: Bool) {
+        if (anim.value(forKey: OLNCircularAnimationHideWhenFinishedKey) != nil) {
+            self.isHidden = true
         }
     }
 }
