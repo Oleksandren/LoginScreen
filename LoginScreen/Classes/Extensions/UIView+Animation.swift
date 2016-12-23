@@ -24,10 +24,12 @@ extension UIView: CAAnimationDelegate {
     }
     
     func animationMoveUp(_ directionUp: Bool, andHide hide: Bool) {
+        let isCurrentlyHidden = self.alpha == 0
         
-        guard hide == Bool(self.alpha == 0) else {
+        guard hide != isCurrentlyHidden else {
             return
         }
+
         self.layer.removeAllAnimations()
         self.alpha = hide ? 0.0 : 1.0
         
