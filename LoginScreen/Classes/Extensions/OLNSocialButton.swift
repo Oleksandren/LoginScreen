@@ -38,7 +38,7 @@ class OLNSocialButton: UIButton {
             context?.addArc(center: CGPoint(x: 19, y: 19),
                        radius: 19,
                        startAngle: 0,
-                       endAngle: CGFloat(Float(M_PI) * 2),
+                       endAngle: CGFloat(Float(Double.pi) * 2),
                        clockwise: false)
             context?.closePath();
             context?.clip(using: .evenOdd)

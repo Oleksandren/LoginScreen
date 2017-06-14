@@ -19,13 +19,13 @@ class OLNLogoView: UIView {
         ctx.setStrokeColor(UIColor.white.cgColor)
         ctx.addArc(center: CGPoint(x: w/2, y: h/2),
                    radius: min(w/2, h/2),
-                   startAngle: CGFloat(Float(M_PI) * 0.6),
-                   endAngle: -CGFloat(Float(M_PI) * 0.6),
+                   startAngle: CGFloat(Float(Double.pi) * 0.6),
+                   endAngle: -CGFloat(Float(Double.pi) * 0.6),
                    clockwise: false)
         ctx.addArc(center: CGPoint(x: w/2, y: h/2),
                    radius: min(w/2, h/2),
-                   startAngle: CGFloat(Float(M_PI) * 0.4),
-                   endAngle: -CGFloat(Float(M_PI) * 0.4),
+                   startAngle: CGFloat(Float(Double.pi) * 0.4),
+                   endAngle: -CGFloat(Float(Double.pi) * 0.4),
                    clockwise: true)
         ctx.strokePath()
     }
